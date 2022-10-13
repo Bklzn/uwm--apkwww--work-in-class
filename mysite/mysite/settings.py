@@ -30,7 +30,12 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 INSTALLED_APPS = [
+    'debug_toolbar',
     'polls.apps.PollsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +46,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
