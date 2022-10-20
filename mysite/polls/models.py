@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 
 class Question(models.Model):
@@ -28,4 +29,5 @@ class Osoba(models.Model):
     )
     imie = models.CharField(max_length = 30) 
     nazwisko = models.CharField(max_length = 30)
-    miesiac_urodzenia = models.IntegerField( default = 0, choices = MONTHS)
+    miesiac_urodzenia = models.IntegerField(default = 0, choices = MONTHS)
+    data_dodania = models.DateField(auto_now_add = True)
