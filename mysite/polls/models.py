@@ -1,4 +1,5 @@
 import datetime
+from random import choices
 
 from django.db import models
 from datetime import date
@@ -39,10 +40,37 @@ class Osoba(models.Model):
     nazwisko = models.CharField(max_length = 30)
     miesiac_urodzenia = models.IntegerField(default = 0, choices = MONTHS)
     data_dodania = models.DateField(auto_now_add = True)
+    druzyna = models.ForeignKey(
+        'Druzyna',
+        on_delete = models.SET_NULL,
+        null = True,
+    )
 
     class Meta:
         ordering = ['nazwisko']
     class OsobaAdmin(admin.ModelAdmin):
-        list_display = ['imie', 'nazwisko', 'miesiac_urodzenia', 'data_dodania']
+        list_display = ('imie', 'nazwisko', 'miesiac_urodzenia', 'data_dodania', 'druzyna_name')
+        list_filter = ('druzyna', 'data_dodania')
+        def druzyna_name(self, obj):
+            return obj.druzyna
+        druzyna_name.short_description = "Drużyna"
+        
     def __str__(self):
         return str(self.imie + ' ' + self.nazwisko)
+class Druzyna(models.Model):
+    COUNTRY_CODES = (
+        ('PL', 'Polska'),
+        ('DE', 'Niemcy'),
+        ('US', 'Stany Zjednoczone'),
+        ('FR', 'Francja'),
+    )
+    nazwa = models.TextField(max_length = 50)
+    kraj = models.CharField(
+        max_length = 2,
+        choices = COUNTRY_CODES,
+        default="PL"
+    )
+    class DruzynaAdmin(admin.ModelAdmin):
+        list_display = ['nazwa', 'kraj']
+    def __str__(self):
+        return f'{self.nazwa} ({self.kraj})'
