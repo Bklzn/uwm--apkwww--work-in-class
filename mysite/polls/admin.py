@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from polls.models import Question, Osoba
+
+admin.site.register(Osoba, Osoba.OsobaAdmin)
+
+admin.site.register(Question)
+# admin.site.register(Osoba)
