@@ -6,7 +6,26 @@ from datetime import date
 from django.utils import timezone
 from django.contrib import admin
 
-
+MONTHS = (
+        (1, 'Styczeń'),
+        (2, 'Luty'),
+        (3, 'Marzec'),
+        (4, 'Kwiecień'),
+        (5, 'Maj'),
+        (6, 'Czerwiec'),
+        (7, 'Lipiec'),
+        (8, 'Sierpień'),
+        (9, 'Wrzesień'),
+        (10, 'Październik'),
+        (11, 'Listopad'),
+        (12, 'Grudzień'),
+)
+COUNTRY_CODES = (
+        ('PL', 'Polska'),
+        ('DE', 'Niemcy'),
+        ('US', 'Stany Zjednoczone'),
+        ('FR', 'Francja'),
+)
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
@@ -22,20 +41,6 @@ class Choice(models.Model):
     votes = models.IntegerField(default=0)
 
 class Osoba(models.Model):
-    MONTHS = (
-        (1, 'Styczeń'),
-        (2, 'Luty'),
-        (3, 'Marzec'),
-        (4, 'Kwiecień'),
-        (5, 'Maj'),
-        (6, 'Czerwiec'),
-        (7, 'Lipiec'),
-        (8, 'Sierpień'),
-        (9, 'Wrzesień'),
-        (10, 'Październik'),
-        (11, 'Listopad'),
-        (12, 'Grudzień'),
-    )
     imie = models.CharField(max_length = 30) 
     nazwisko = models.CharField(max_length = 30)
     miesiac_urodzenia = models.IntegerField(default = 0, choices = MONTHS)
@@ -58,12 +63,6 @@ class Osoba(models.Model):
     def __str__(self):
         return str(self.imie + ' ' + self.nazwisko)
 class Druzyna(models.Model):
-    COUNTRY_CODES = (
-        ('PL', 'Polska'),
-        ('DE', 'Niemcy'),
-        ('US', 'Stany Zjednoczone'),
-        ('FR', 'Francja'),
-    )
     nazwa = models.TextField(max_length = 50)
     kraj = models.CharField(
         max_length = 2,
