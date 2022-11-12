@@ -1,10 +1,11 @@
-import datetime
 from random import choices
-
+from rest_framework import serializers
+from rest_framework.decorators import api_view
 from django.db import models
-from datetime import date
+from datetime import date, datetime
 from django.utils import timezone
 from django.contrib import admin
+
 
 MONTHS = (
         (1, 'Styczeń'),
@@ -26,6 +27,15 @@ COUNTRY_CODES = (
         ('US', 'Stany Zjednoczone'),
         ('FR', 'Francja'),
 )
+def lettersOnly(input):
+    if not input.isalpha():
+        raise serializers.ValidationError("Imię i nazwisko powinny zawierać tylko litery")
+    return input
+
+def noFutureMonth(input):
+    if not input > datetime.now().month:
+        raise serializers.ValidationError("Miesiąc nie może być późniejszy niż teraźniejszy")
+    return input
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
@@ -41,9 +51,9 @@ class Choice(models.Model):
     votes = models.IntegerField(default=0)
 
 class Osoba(models.Model):
-    imie = models.CharField(max_length = 30) 
-    nazwisko = models.CharField(max_length = 30)
-    miesiac_urodzenia = models.IntegerField(default = 0, choices = MONTHS)
+    imie = models.CharField(max_length = 30, validators=[lettersOnly]) 
+    nazwisko = models.CharField(max_length = 30, validators=[lettersOnly])
+    miesiac_urodzenia = models.IntegerField(default = datetime.now().month, choices = MONTHS, validators=[noFutureMonth])
     data_dodania = models.DateField(auto_now_add = True)
     druzyna = models.ForeignKey(
         'Druzyna',
