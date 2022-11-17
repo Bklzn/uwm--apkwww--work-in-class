@@ -1,12 +1,17 @@
 from rest_framework import serializers
 from .models import Question, Choice, Osoba, Druzyna, MONTHS, COUNTRY_CODES
-
+from django.contrib.auth.models import User
 class OsobaSerializer(serializers.Serializer):
     imie = serializers.CharField(max_length = 30)
     nazwisko = serializers.CharField(max_length = 30)
     miesiac_urodzenia = serializers.ChoiceField(choices = MONTHS, default = MONTHS[0])
     data_dodania = serializers.DateField()
     druzyna = serializers.PrimaryKeyRelatedField(queryset = Druzyna.objects.all(), allow_null = True)
+    wlasciciel = serializers.PrimaryKeyRelatedField(queryset = User.objects.all(), allow_null = True)
+    class Meta:
+        model = Osoba
+        fields = ('imie', 'nazwisko',  'miesiac_urodzenia', 'data_dodania' , 'druzyna', 'wlascicel')
+        
     def create(self, validated_data):
         return Osoba.objects.create(**validated_data)
 
