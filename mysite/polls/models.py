@@ -1,10 +1,9 @@
-from random import choices
 from rest_framework import serializers
 from rest_framework.decorators import api_view
 from django.db import models
 from datetime import date, datetime
 from django.utils import timezone
-from django.contrib import admin
+from django.contrib import admin, auth
 
 
 MONTHS = (
@@ -60,6 +59,7 @@ class Osoba(models.Model):
         on_delete = models.SET_NULL,
         null = True,
     )
+    wlasciciel = models.ForeignKey('auth.User', null = True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['nazwisko']
