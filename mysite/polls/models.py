@@ -63,6 +63,9 @@ class Osoba(models.Model):
 
     class Meta:
         ordering = ['nazwisko']
+        permissions = [
+            ('can_view_other_persons', 'Pozwala widzieć osoby z tej samej drużyny'),
+        ]
     class OsobaAdmin(admin.ModelAdmin):
         list_display = ('imie', 'nazwisko', 'miesiac_urodzenia', 'data_dodania', 'druzyna_name')
         list_filter = ('druzyna', 'data_dodania')

@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from .models import Osoba, Druzyna
 from .serializers import OsobaSerializer, DruzynaSerializer
 from django.contrib.auth.models import User
+from .permissions import MyDjangoModelPermission
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
@@ -44,7 +45,6 @@ def osoba_list(request):
 @authentication_classes([SessionAuthentication, BasicAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def osoba_detail(request, pk):
-    print(request.META.get('HTTP_AUTHORIZATION'))
     try:
         osoba = Osoba.objects.get(pk=pk)
     except osoba.DoesNotExist:
@@ -113,6 +113,7 @@ def osoba_namefit(request, input):
 
 
 @api_view(['GET'])
+@permission_classes([MyDjangoModelPermission])
 def druzyna_list(request):
     if request.method == 'GET':
         druzyna = Druzyna.objects.all()
@@ -151,3 +152,26 @@ def druzyna_teammates(request, id):
         osoby = Osoba.objects.filter(druzyna_id=id, wlasciciel_id=request.user.id)
         serializer = OsobaSerializer(osoby, many=True)
         return Response(serializer.data)
+
+def osoba_view(request, pk):
+    if not request.user.has_perm('polls.view_osoba'):
+        return HttpResponse(f"Nie masz uprawnień")
+    try:
+        osoba = Osoba.objects.get(pk=pk)
+        return HttpResponse(f"Ten użytkownik nazywa się {osoba}")
+    except Osoba.DoesNotExist:
+        return HttpResponse(f"W bazie nie ma użytkownika o id={pk}.")
+
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])
+def osoba_teamSquad(request, pk):
+    if not request.user.has_perm('polls.can_view_other_persons'):
+        return HttpResponse(f"Nie masz uprawnień")
+    try:
+        druzyna_id = Osoba.objects.get(pk = pk, wlasciciel_id=request.user.id).druzyna_id
+        osoba = Osoba.objects.filter(druzyna_id = druzyna_id)
+        serializer = OsobaSerializer(osoba, many = True)
+        return Response(serializer.data)
+    except Osoba.DoesNotExist:
+        return HttpResponse(f"W bazie nie ma użytkownika o id={pk}.")
