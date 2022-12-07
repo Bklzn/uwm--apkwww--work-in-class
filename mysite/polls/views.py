@@ -34,7 +34,8 @@ def osoba_list(request):
         serializer = OsobaSerializer(osoba, many = True)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = OsobaSerializer(data=request.data)
+        osoba = Osoba(**request.data)
+        serializer = OsobaSerializer(osoba, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
